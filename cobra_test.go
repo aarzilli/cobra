@@ -244,12 +244,8 @@ func TestRpad(t *testing.T) {
 func TestDeadcodeElimination(t *testing.T) {
 	// check that a simple program using cobra in its default configuration is
 	// linked with deadcode elimination enabled.
-	const (
-		dirname  = "test_deadcode"
-		progname = "test_deadcode_elimination"
-	)
-	_ = os.Mkdir(dirname, 0770)
-	defer os.RemoveAll(dirname)
+	const progname = "test_deadcode_elimination"
+	dirname := t.TempDir()
 	filename := filepath.Join(dirname, progname+".go")
 	err := os.WriteFile(filename, []byte(`package main
 
@@ -285,7 +281,6 @@ func main() {
 	if err != nil {
 		t.Fatalf("could not compile test program: %s", string(buf))
 	}
-	defer os.Remove(progname)
 	buf, err = exec.Command("go", "tool", "nm", progname).CombinedOutput()
 	if err != nil {
 		t.Fatalf("could not run go tool nm: %v", err)
